@@ -1,10 +1,13 @@
 package main
 
-import "backend/redis"
+import (
+	"backend/redis"
+	"backend/settings"
+)
 
 func main() {
 	// 1.初始化配置文件
-	// settings.Init()
+	settings.Init()
 	// 2.初始化日志
 	// 3.初始化mysql
 	// 4.初始化Redis
