@@ -10,30 +10,34 @@ import (
 )
 
 func Init(conf *settings.LogConfig) {
+	var cores zapcore.Core
+	var confCore zapcore.Core //the core which setted by configuration file
+
+	// Get LogLevel from config file
 	level := new(zapcore.Level)
-	err := level.UnmarshalText([]byte(conf.Level))
-	if err != nil {
+	if err := level.UnmarshalText([]byte(conf.Level)); err != nil {
 		panic(err)
 	}
-	confCore := zapcore.NewCore(
+	confCore = zapcore.NewCore(
 		zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()), //Encoder
 		getWriteSync(conf), //WriteSyncer
 		level)              //LogLevel
+	cores = confCore
 
-	// if 配置文件中Mode="dev"
+	// if Mode="dev"
 	var devCore zapcore.Core
 	if settings.Conf.Mode == "dev" {
 		devCore = zapcore.NewCore(
-			zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig()), //Encode
-			os.Stdout,          //WriteSyncer
-			zapcore.DebugLevel) //LogLevel
+			zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig()),
+			os.Stdout,
+			zapcore.DebugLevel)
+		cores = zapcore.NewTee(confCore, devCore)
 	}
-	core := zapcore.NewTee(confCore, devCore)
-	logger := zap.New(core, zap.WithCaller(true))
+	logger := zap.New(cores, zap.WithCaller(true))
 	zap.ReplaceGlobals(logger)
 
-	// 输出测试
-	zap.L().Debug("Logger Init Success")
+	// just a test
+	zap.L().Info("Logger Init Success")
 }
 
 func getWriteSync(s *settings.LogConfig) zapcore.WriteSyncer {

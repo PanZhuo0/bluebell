@@ -2,8 +2,10 @@ package main
 
 import (
 	"backend/logger"
+	"backend/mysql"
 	"backend/redis"
 	"backend/settings"
+	"time"
 )
 
 func main() {
@@ -12,9 +14,10 @@ func main() {
 	// 2.初始化日志
 	logger.Init(settings.Conf.LogConfig)
 	// 3.初始化mysql
-	// mysql.init(settings.Conf.MySQLConfig)
+	mysql.Init(settings.Conf.MySQLConfig)
 	// 4.初始化Redis
 	redis.Init()
 	// 5.初始化Router
 	// 6.运行Router
+	time.Sleep(5 * time.Second)
 }
