@@ -2,9 +2,9 @@ package redis
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 )
 
 var client *redis.Client
@@ -17,8 +17,8 @@ func Init() {
 	})
 	result, err := client.Ping(context.Background()).Result()
 	if err != nil {
-		fmt.Println(err)
+		zap.L().Debug("初始化Redis失败")
 		return
 	}
-	fmt.Println("Redis 初始化成功！", result)
+	zap.L().Info("初始化Redis成功", zap.String("Result", result))
 }

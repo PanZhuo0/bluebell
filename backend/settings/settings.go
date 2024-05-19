@@ -47,7 +47,10 @@ func Init() {
 	// 动态监视配置的改变
 	viper.OnConfigChange(func(in fsnotify.Event) {
 		fmt.Println("糟糕!配置文件被修改了!")
-		viper.Unmarshal(&Conf)
+		err := viper.Unmarshal(&Conf)
+		if err != nil {
+			fmt.Println(err)
+		}
 	})
 
 	// 把配置信息反序列化到AppConfig对象中
@@ -56,7 +59,4 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(Conf.MySQLConfig)
-	fmt.Println(Conf.RedisConfig)
-	fmt.Println(Conf.LogConfig)
 }

@@ -3,8 +3,15 @@ module backend
 go 1.22.0
 
 require (
+	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/spf13/viper v1.18.2
+	go.uber.org/zap v1.21.0
+)
+
+require (
+	github.com/BurntSushi/toml v1.3.2 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )
 
 require (
