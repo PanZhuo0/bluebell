@@ -4,8 +4,9 @@ import (
 	"backend/logger"
 	"backend/mysql"
 	"backend/redis"
+	"backend/router"
 	"backend/settings"
-	"time"
+	"strconv"
 )
 
 func main() {
@@ -16,8 +17,9 @@ func main() {
 	// 3.初始化mysql
 	mysql.Init(settings.Conf.MySQLConfig)
 	// 4.初始化Redis
-	redis.Init()
+	redis.Init(settings.Conf.RedisConfig)
 	// 5.初始化Router
+	r := router.Setup()
 	// 6.运行Router
-	time.Sleep(5 * time.Second)
+	r.Run(":" + strconv.Itoa(settings.Conf.Port))
 }

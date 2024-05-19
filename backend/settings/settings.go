@@ -45,8 +45,9 @@ type RedisConfig struct {
 func Init() {
 	viper.SetConfigFile("./conf/config.yaml")
 	// 动态监视配置的改变
+	viper.WatchConfig()
 	viper.OnConfigChange(func(in fsnotify.Event) {
-		fmt.Println("糟糕!配置文件被修改了!")
+		fmt.Println("~~夭寿了~~, 配置文件被修改了!")
 		err := viper.Unmarshal(&Conf)
 		if err != nil {
 			fmt.Println(err)

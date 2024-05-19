@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"backend/settings"
 	"context"
 
 	"github.com/redis/go-redis/v9"
@@ -9,11 +10,11 @@ import (
 
 var client *redis.Client
 
-func Init() {
+func Init(conf *settings.RedisConfig) {
 	// 需要关闭虚拟机的防火墙(不知道应该是那个端口、或许是docker对应的那个、同时需要redis容器使用主机端口映射)
 	client = redis.NewClient(&redis.Options{
-		Addr: "192.168.18.133:6379", //虚拟机的IP
-		DB:   0,
+		Addr: conf.Host + ":" + conf.Port,
+		DB:   conf.DB,
 	})
 	result, err := client.Ping(context.Background()).Result()
 	if err != nil {
