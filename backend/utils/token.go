@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -75,7 +75,7 @@ func ParseToken(tokenStr string) (claims *MyClaims, err error) {
 	claims = new(MyClaims)
 	token, err = jwt.ParseWithClaims(tokenStr, claims, keyFunc) //使用claims 和 key 将tokenStr中的信息解析出来
 	if !token.Valid {
-		err = errors.New("invalid token")
+		fmt.Println(err)
 	}
 	return
 }

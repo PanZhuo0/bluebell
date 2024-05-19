@@ -16,16 +16,22 @@ const (
 	CodeNeedToken
 	CodeTokenExpired
 	CodeInvalidToken
+	CodeInvalidParams
+	CodeUserExist
+	CodeUserPasswordWrong
 	CodeServeBusy
 )
 
 // Msg decided by ResCode
 var codeMap = map[ResCode]string{
-	CodeSuccess:      "成功",
-	CodeNeedToken:    "需要Token信息",
-	CodeTokenExpired: "Token已过期",
-	CodeInvalidToken: "无效的Token",
-	CodeServeBusy:    "服务忙",
+	CodeSuccess:           "成功",
+	CodeNeedToken:         "需要Token",
+	CodeTokenExpired:      "Token已过期",
+	CodeInvalidToken:      "无效的Token",
+	CodeInvalidParams:     "请求参数错误",
+	CodeUserExist:         "用户已存在",
+	CodeUserPasswordWrong: "用户密码错误",
+	CodeServeBusy:         "服务忙",
 }
 
 func (c ResCode) Msg() string {

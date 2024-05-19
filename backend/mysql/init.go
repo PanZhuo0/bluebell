@@ -12,7 +12,6 @@ import (
 var db *sqlx.DB
 
 func Init(conf *settings.MySQLConfig) (err error) {
-	// dsn := `root:123123@tcp(localhost:3306)/tset?parseTime=true,local`
 	dsn := fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=Local`, conf.User, conf.Password, conf.Host, conf.Port, conf.DB)
 	db, err = sqlx.Connect("mysql", dsn)
 	if err != nil {

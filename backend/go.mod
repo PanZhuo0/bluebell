@@ -9,6 +9,7 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/redis/go-redis/v9 v9.5.1
+	github.com/sony/sonyflake v1.2.0
 	github.com/spf13/viper v1.18.2
 	go.uber.org/zap v1.21.0
 )

@@ -6,10 +6,15 @@ import (
 	"backend/redis"
 	"backend/router"
 	"backend/settings"
+	"backend/utils"
 	"strconv"
 )
 
+const MachineID = 1000
+
 func main() {
+	// pre:初始化工具
+	utils.Init(MachineID)
 	// 1.初始化配置文件
 	settings.Init()
 	// 2.初始化日志

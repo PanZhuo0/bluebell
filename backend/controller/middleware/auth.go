@@ -22,15 +22,15 @@ func AuthMiddleWare() gin.HandlerFunc {
 			return
 		}
 		parts := strings.SplitN(authHeader, " ", 2)
-		if !(len(parts) != 2 && parts[0] == "Bearer") {
+		if !(len(parts) == 2 && parts[0] == "Bearer") {
 			controller.ResponseErrorWithMsg(c, http.StatusBadRequest, controller.CodeInvalidToken, "Token格式不对")
 			c.Abort()
 			return
 		}
 		mc, err := utils.ParseToken(parts[1])
 		if err != nil {
-			zap.L().Error("解析Token时出错", zap.String("Token:", parts[1]), zap.Error(err))
-			controller.ResponseError(c, http.StatusBadRequest, controller.CodeInvalidToken)
+			zap.L().Error("解析Token时出错", zap.String("Token:", parts[1]))
+			controller.ResponseErrorWithMsg(c, http.StatusBadRequest, controller.CodeInvalidToken, err.Error())
 			c.Abort()
 			return
 		}
