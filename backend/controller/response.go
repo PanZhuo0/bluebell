@@ -1,0 +1,70 @@
+package controller
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+type ResCode int16
+type ResData struct {
+	ResCode `json:"code"`
+	Msg     string      `json:"msg"`
+	Data    interface{} `json:"data"`
+}
+
+const (
+	CodeSuccess ResCode = iota + 1000
+	CodeNeedToken
+	CodeTokenExpired
+	CodeInvalidToken
+	CodeServeBusy
+)
+
+// Msg decided by ResCode
+var codeMap = map[ResCode]string{
+	CodeSuccess:      "成功",
+	CodeNeedToken:    "需要Token信息",
+	CodeTokenExpired: "Token已过期",
+	CodeInvalidToken: "无效的Token",
+	CodeServeBusy:    "服务忙",
+}
+
+func (c ResCode) Msg() string {
+	msg, ok := codeMap[c]
+	if !ok {
+		return codeMap[CodeServeBusy]
+	}
+	return msg
+}
+
+// Response functions
+func ResponseSuccess(c *gin.Context) {
+	c.JSON(200, ResData{
+		CodeSuccess,
+		CodeSuccess.Msg(),
+		nil,
+	})
+}
+
+func ResponseError(c *gin.Context, code int, rcode ResCode) {
+	c.JSON(code, ResData{
+		rcode,
+		rcode.Msg(),
+		nil,
+	})
+}
+
+func ResponseErrorWithMsg(c *gin.Context, code int, rcode ResCode, msg string) {
+	c.JSON(code, ResData{
+		rcode,
+		msg,
+		nil,
+	})
+}
+
+func ResponseSuccessWithData(c *gin.Context, data interface{}) {
+	c.JSON(200, ResData{
+		CodeSuccess,
+		CodeSuccess.Msg(),
+		data,
+	})
+}
