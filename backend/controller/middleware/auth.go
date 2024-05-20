@@ -10,8 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var ContextUserID = "USERID"
-
 func AuthMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
@@ -35,7 +33,7 @@ func AuthMiddleWare() gin.HandlerFunc {
 			return
 		}
 		// Token有效,把Token中的ID设置到上下文中
-		c.Set(ContextUserID, mc.UserID)
+		c.Set(controller.ContextUserID, mc.UserID)
 		c.Next()
 	}
 }

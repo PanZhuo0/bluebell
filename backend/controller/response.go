@@ -19,6 +19,7 @@ const (
 	CodeInvalidParams
 	CodeUserExist
 	CodeUserPasswordWrong
+	CodeContextWrong
 	CodeServeBusy
 )
 
@@ -31,6 +32,7 @@ var codeMap = map[ResCode]string{
 	CodeInvalidParams:     "请求参数错误",
 	CodeUserExist:         "用户已存在",
 	CodeUserPasswordWrong: "用户密码错误",
+	CodeContextWrong:      "上下文中存在问题",
 	CodeServeBusy:         "服务忙",
 }
 

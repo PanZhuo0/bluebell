@@ -30,13 +30,9 @@ func SignUp(p *model.ParamSignUp) (err error) {
 	return
 }
 
-func Login(p *model.User) (err error) {
-	// 0.值传递
-	user := new(model.User)
-	user.UserName = p.UserName
-	user.Password = p.Password
+func Login(u *model.User) (err error) {
 	// 1.验证用户账号密码
-	if err = mysql.CheckUserPassword(user); err != nil {
+	if err = mysql.CheckUserPassword(u); err != nil {
 		zap.L().Error("调用mysql.CheckUserPassword后出错", zap.Error(err))
 	}
 	return

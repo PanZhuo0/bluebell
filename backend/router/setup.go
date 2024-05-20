@@ -16,6 +16,8 @@ func Setup() *gin.Engine {
 	{
 		v1.GET("/communities", controller.CommunityHandler)
 		v1.GET("/communityDetail/:id", controller.CommunityDetailHandler)
+
+		v1.POST("/post", controller.CreatePostHandler)
 	}
 	return r
 }
