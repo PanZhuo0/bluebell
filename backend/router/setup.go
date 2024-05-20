@@ -14,7 +14,8 @@ func Setup() *gin.Engine {
 	v1.POST("/login", controller.LoginHandler)
 	v1.Use(middleware.AuthMiddleWare())
 	{
-		v1.GET("/test", controller.TestHandler)
+		v1.GET("/communities", controller.CommunityHandler)
+		v1.GET("/communityDetail/:id", controller.CommunityDetailHandler)
 	}
 	return r
 }

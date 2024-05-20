@@ -18,8 +18,8 @@ func Init(conf *settings.RedisConfig) {
 	})
 	result, err := client.Ping(context.Background()).Result()
 	if err != nil {
-		zap.L().Debug("初始化Redis失败")
-		return
+		zap.L().Error("初始化Redis失败")
+		panic(err)
 	}
 	zap.L().Info("初始化Redis成功", zap.String("Result", result))
 }
