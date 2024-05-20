@@ -4,16 +4,27 @@ import (
 	"backend/model"
 	"backend/mysql"
 	"backend/redis"
+	"backend/utils"
 
 	"go.uber.org/zap"
 )
 
 func CreatePost(uid uint64, p *model.Post) (err error) {
+	// 生成PostID
+	pid, err := utils.GenID()
+	if err != nil {
+		zap.L().Error("调用utils.GenID()后出错", zap.Error(err))
+		return
+	}
+	p.PostID = pid
+
+	// 生成帖子
 	err = mysql.CreatePost(uid, p)
 	if err != nil {
 		zap.L().Error("调用mysql.CreatePost后出错", zap.Error(err))
 	}
-	err = redis.CreatePost(uid, p)
+	// redis初始化帖子相关的数据
+	err = redis.CreatePost(p)
 	if err != nil {
 		zap.L().Error("调用redis.CreatePost后出错", zap.Error(err), zap.Uint64("uid", uid), zap.Any("Post", p))
 		return
