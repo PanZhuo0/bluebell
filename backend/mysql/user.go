@@ -53,3 +53,13 @@ func CheckUserPassword(u *model.User) (err error) {
 	}
 	return
 }
+
+func GetUserByID(uid uint64) (user *model.User, err error) {
+	user = new(model.User)
+	sqlStr := `select user_id,username from user where user_id = ?`
+	if err = db.Get(user, sqlStr, uid); err != nil {
+		zap.L().Error("MySQL执行出错", zap.Error(err), zap.String("sqlStr", sqlStr))
+		return
+	}
+	return
+}

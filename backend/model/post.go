@@ -7,7 +7,13 @@ type Post struct {
 	Title       string    `json:"title" db:"title" binding:"required"`
 	Content     string    `json:"content" db:"content" binding:"required"`
 	AuthorID    uint64    `json:"author_id" db:"author_id"`
-	CommunityID int64     `json:"community_id" db:"community_id" binding:"required"`
+	CommunityID uint64    `json:"community_id" db:"community_id" binding:"required"`
 	Status      int32     `json:"status" db:"status"`
 	CreateTime  time.Time `json:"create_time" db:"create_time"`
+}
+
+type APIPostDetail struct {
+	*Post
+	AuthorName    string `json:"author_name"`
+	CommunityName string `json:"community_name"`
 }
