@@ -6,7 +6,6 @@ import (
 	"backend/redis"
 	"backend/utils"
 	"errors"
-	"fmt"
 	"strconv"
 
 	"go.uber.org/zap"
@@ -91,12 +90,40 @@ func GetPostList(p *model.ParamPostList) (data []*model.APIPostDetail, err error
 			return nil, err
 		}
 		p, err := GetPostDetailByID(uint64(id))
-		fmt.Println("postdeail:", p.CommunityDetail)
 		if err != nil {
 			zap.L().Error("获取第index个帖子的详细信息时出错", zap.Error(err), zap.Int("Index", i))
 			return nil, err
 		}
 		data = append(data, p)
+	}
+	return
+}
+
+func PostListByCommunity(p *model.ParamPostListInSpecialCommunity) (posts []*model.APIPostDetail, err error) {
+	// 从redis中获取对应IDs
+	ids, err := redis.GetPostListIDsByCommunity(p)
+	if err != nil {
+		zap.L().Error("调用redis.GetPostListIDsByCommunity()后出错", zap.Error(err), zap.Any("参数", p))
+		return
+	}
+	// 依照IDs去MySQL中查询数据
+	if len(ids) == 0 { //如果获取到的IDs数组为空
+		zap.L().Info("对应社区该页中无数据")
+		return nil, ErrorIDsEmpty
+	}
+	// 循环获取(这样性能不如预处理快)
+	for i := 0; i < len(ids); i++ {
+		id, err := strconv.ParseInt(ids[i], 10, 64)
+		if err != nil {
+			zap.L().Error("解析第index个ID时出错", zap.Error(err), zap.Int("index", i))
+			return nil, err
+		}
+		post, err := GetPostDetailByID(uint64(id))
+		if err != nil {
+			zap.L().Error("调用GetPostDetailByID()获取帖子详情时出错", zap.Error(err), zap.Int("index", i))
+			return nil, err
+		}
+		posts = append(posts, post)
 	}
 	return
 }

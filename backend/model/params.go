@@ -46,3 +46,10 @@ type ParamPostList struct {
 	Size  int    `form:"size"`
 	Order string `form:"order"`
 }
+
+type ParamPostListInSpecialCommunity struct {
+	CommunityID uint64 `form:"community_id" binding:"required"`
+	Page        int    `form:"page"`
+	Size        int    `form:"size"`
+	Order       string `form:"order"`
+}
