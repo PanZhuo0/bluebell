@@ -22,6 +22,8 @@ const (
 	CodeContextWrong
 	CodeDataNotExist
 	CodePageInvalid
+	CodeVoteRepeated
+	CodeVoteTimeExpired
 	CodeServeBusy
 )
 
@@ -37,6 +39,8 @@ var codeMap = map[ResCode]string{
 	CodeContextWrong:      "上下文中存在问题",
 	CodeDataNotExist:      "对应的数据不存在",
 	CodePageInvalid:       "页码无效",
+	CodeVoteRepeated:      "请勿重复投票",
+	CodeVoteTimeExpired:   "投票时间已过",
 	CodeServeBusy:         "服务忙",
 }
 
