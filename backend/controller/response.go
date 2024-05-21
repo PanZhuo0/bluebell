@@ -21,6 +21,7 @@ const (
 	CodeUserPasswordWrong
 	CodeContextWrong
 	CodeDataNotExist
+	CodePageInvalid
 	CodeServeBusy
 )
 
@@ -35,6 +36,7 @@ var codeMap = map[ResCode]string{
 	CodeUserPasswordWrong: "用户密码错误",
 	CodeContextWrong:      "上下文中存在问题",
 	CodeDataNotExist:      "对应的数据不存在",
+	CodePageInvalid:       "页码无效",
 	CodeServeBusy:         "服务忙",
 }
 

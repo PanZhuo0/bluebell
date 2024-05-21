@@ -5,8 +5,15 @@ import (
 	"backend/mysql"
 	"backend/redis"
 	"backend/utils"
+	"errors"
+	"fmt"
+	"strconv"
 
 	"go.uber.org/zap"
+)
+
+var (
+	ErrorIDsEmpty = errors.New("Redis中查询不到对应ID")
 )
 
 func CreatePost(uid uint64, p *model.Post) (err error) {
@@ -36,7 +43,7 @@ func GetPostDetailByID(pid uint64) (data *model.APIPostDetail, err error) {
 	data = new(model.APIPostDetail)
 	var post *model.Post
 	var user *model.User
-	var community *model.CommunityDetail
+	var communityDetail *model.CommunityDetail
 	post, err = mysql.GetPostDetailByID(pid)
 	// get post
 	if err != nil {
@@ -49,19 +56,47 @@ func GetPostDetailByID(pid uint64) (data *model.APIPostDetail, err error) {
 		zap.L().Error("调用mysql.GetUserByID()后出错", zap.Uint64("post.AuthorID", post.AuthorID))
 		return
 	}
-	// get CommunityName by community_id
-	community, err = mysql.GetCommunityDetailByID(post.CommunityID)
+	// get CommunityDetail by community_id
+	communityDetail, err = mysql.GetCommunityDetailByID(post.CommunityID)
 	if err != nil {
 		zap.L().Error("调用mysql.GetCommunityDetailByID()后出错", zap.Uint64("post.CommunityID", post.CommunityID))
 		return
 	}
 	data.Post = post
 	data.AuthorName = user.UserName
-	data.CommunityName = community.CommunityName
+	data.CommunityDetail = communityDetail
 	return
 }
 
-func GetPostList() (data []*model.Post, err error) {
-	// 具体需求还不确定,暂时搁置
+func GetPostList(p *model.ParamPostList) (data []*model.APIPostDetail, err error) {
+	// 1.获取redis中的ID
+	ids, err := redis.GetPostListIDs(p)
+	if err != nil {
+		zap.L().Error("调用redis.GetPostListIDs()后出错", zap.Error(err), zap.Any("参数", p))
+		return
+	}
+	// Redis中无对应ID数据
+	if len(ids) == 0 {
+		return nil, ErrorIDsEmpty
+	}
+	// 2.从MySQL中取出数据
+	// 方法一:通过sqlx.In 批量获取post数据, 再根据每个POST的community_ID,author_id获取(这似乎有点画蛇添足,但是我还是实现了ids sqlx.In 批量查询)
+	// posts, err := mysql.GetPostListByIDs(ids) //还需实现通过Post_id 查询对应社区、用户的信息,返回APIPostDetail
+
+	// 方法二，直接for 循环调用logic.GetPostDetailByID()
+	for i := 0; i < len(ids); i++ {
+		id, err := strconv.ParseInt(ids[i], 10, 64)
+		if err != nil {
+			zap.L().Error("获取第index个帖子的ID时出错", zap.Error(err), zap.Int("Index", i))
+			return nil, err
+		}
+		p, err := GetPostDetailByID(uint64(id))
+		fmt.Println("postdeail:", p.CommunityDetail)
+		if err != nil {
+			zap.L().Error("获取第index个帖子的详细信息时出错", zap.Error(err), zap.Int("Index", i))
+			return nil, err
+		}
+		data = append(data, p)
+	}
 	return
 }

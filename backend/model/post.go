@@ -13,7 +13,7 @@ type Post struct {
 }
 
 type APIPostDetail struct {
-	*Post
-	AuthorName    string `json:"author_name"`
-	CommunityName string `json:"community_name"`
+	AuthorName       string `json:"author_name"`
+	*Post            `json:"post"`
+	*CommunityDetail `json:"communityDetail"`
 }
