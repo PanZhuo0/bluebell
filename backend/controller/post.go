@@ -89,11 +89,6 @@ func PostListHandler(c *gin.Context) {
 }
 
 // PostListInCommunityByTimes/Scores？
-// 根据社区，在社区内的按time/score 排序(总体逻辑上来说是类似的，只是增加一个community_id的限制)
-// 如何实现，使用zset 交集inter zset:
-// 维护一个commmunity_list
-
-// 获取某个社区内的帖子列表(允许按时间/热度排序,需要分页)
 func GetPostListByCommunityHandler(c *gin.Context) {
 	// 1.参数获取与处理
 	p := &model.ParamPostListInSpecialCommunity{

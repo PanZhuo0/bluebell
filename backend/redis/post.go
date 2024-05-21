@@ -12,32 +12,23 @@ import (
 
 func CreatePost(p *model.Post) (err error) {
 	// 在bluebell:post:createTime中增加该Post对应的记录
-	_, err = client.ZAdd(context.Background(), getKey(KeyZSetPostIDCreateTime), redis.Z{
+	// 整个创建过程应该在一个事务中完成
+	pipe := client.TxPipeline()
+	pipe.ZAdd(context.Background(), getKey(KeyZSetPostIDCreateTime), redis.Z{
 		Member: p.PostID,
 		Score:  float64(time.Now().Unix()), //当前时间戳
 	}).Result()
-	if err != nil {
-		zap.L().Error("Redis:ZAdd()失败", zap.Error(err),
-			zap.Any("Post Object", p),
-			zap.String("key", KeyZSetPostIDCreateTime))
-		return
-	}
 	// 在bluebell:post:score中增加该Post对应的记录
-	_, err = client.ZAdd(context.Background(), getKey(KeyZSetPostIDScore), redis.Z{
+	pipe.ZAdd(context.Background(), getKey(KeyZSetPostIDScore), redis.Z{
 		Member: p.PostID,
 		Score:  float64(time.Now().Unix()),
 	}).Result()
-	if err != nil {
-		zap.L().Error("Redis:ZAdd()失败", zap.Error(err),
-			zap.Any("Post Object", p),
-			zap.String("key", KeyZSetPostIDScore))
-		return
-	}
 	// 在bluebell:community:comunityID增加对应的记录
 	cid := strconv.Itoa(int(p.CommunityID)) //社区id
-	_, err = client.SAdd(context.Background(), getKey(KeySetCommunityPrefix)+cid, p.PostID).Result()
+	pipe.SAdd(context.Background(), getKey(KeySetCommunityPrefix)+cid, p.PostID).Result()
+	_, err = pipe.Exec(context.Background())
 	if err != nil {
-		zap.L().Error("Redis:往社区中增加Post_ID出错", zap.Error(err), zap.String("社区ID", cid), zap.Uint64("帖子ID", p.PostID))
+		zap.L().Error("Redis:执行创建Post事务时出错", zap.Error(err))
 		return
 	}
 	return
