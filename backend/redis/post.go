@@ -51,7 +51,7 @@ func GetPostListIDs(p *model.ParamPostList) (ids []string, err error) {
 }
 
 // 根据参数从指定社区取出按分数/时间排序的某处的ID
-func GetPostListIDsByCommunity(p *model.ParamPostListInSpecialCommunity) (ids []string, err error) {
+func GetPostListIDsByCommunity(p *model.ParamPostList) (ids []string, err error) {
 	// 0.获取对应缓存key
 	cachekey := p.Order + strconv.Itoa(int(p.CommunityID)) //eg:time[12312313--社区ID]
 	communityKey := getKey(KeySetCommunityPrefix + strconv.Itoa(int(p.CommunityID)))

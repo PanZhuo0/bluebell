@@ -99,7 +99,7 @@ func GetPostList(p *model.ParamPostList) (data []*model.APIPostDetail, err error
 	return
 }
 
-func PostListByCommunity(p *model.ParamPostListInSpecialCommunity) (posts []*model.APIPostDetail, err error) {
+func GetPostListByCommunity(p *model.ParamPostList) (posts []*model.APIPostDetail, err error) {
 	// 从redis中获取对应IDs
 	ids, err := redis.GetPostListIDsByCommunity(p)
 	if err != nil {

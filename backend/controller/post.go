@@ -64,34 +64,9 @@ func PostDetailHandler(c *gin.Context) {
 
 // Addition:需要获取每个帖子中的赞同数
 // Addition:增加一个定时任务、如果post的时间超过一小时、停止投票（把post从redis中的对应zset中删除、分数表、time/score表）
-func PostListHandler(c *gin.Context) {
-	// 参数检验
-	p := &model.ParamPostList{
-		Page:  1,
-		Size:  10,
-		Order: model.OrderTime,
-	}
-	err := c.ShouldBindQuery(p)
-	if (p.Order != model.OrderScore && p.Order != model.OrderTime) || err != nil || p.Page <= 0 {
-		zap.L().Error("请求参数有误", zap.Error(err))
-		ResponseError(c, http.StatusBadRequest, CodeInvalidParams)
-		return
-	}
-	// 获取数据
-	data, err := logic.GetPostList(p)
-	if err != nil {
-		zap.L().Error("调用logic.GetPostList()后出错", zap.Error(err))
-		ResponseError(c, http.StatusAccepted, CodePageInvalid)
-		return
-	}
-	// 响应
-	ResponseSuccessWithData(c, data)
-}
-
-// PostListInCommunityByTimes/Scores？
-func GetPostListByCommunityHandler(c *gin.Context) {
+func PostListHandler(c *gin.Context) { // 整合:按社区查询、全部查询
 	// 1.参数获取与处理
-	p := &model.ParamPostListInSpecialCommunity{
+	p := &model.ParamPostList{
 		CommunityID: 0,
 		Page:        1,
 		Size:        10,
@@ -104,17 +79,36 @@ func GetPostListByCommunityHandler(c *gin.Context) {
 		return
 	}
 	// 2.业务逻辑
-	data, err := logic.PostListByCommunity(p)
-	if err != nil {
-		if errors.Is(err, logic.ErrorIDsEmpty) {
-			zap.L().Info("从Redis中并未获取到IDs", zap.Error(err), zap.Any("参数", p))
-			ResponseError(c, http.StatusAccepted, CodePageInvalid)
+	var data []*model.APIPostDetail
+	if p.CommunityID == 0 {
+		// (communityID==0)未指定社区,将查询全部帖子
+		data, err = logic.GetPostList(p)
+		if err != nil {
+			if errors.Is(err, logic.ErrorIDsEmpty) {
+				zap.L().Info("从Redis中并未获取到IDs", zap.Error(err), zap.Any("参数", p))
+				ResponseError(c, http.StatusAccepted, CodePageInvalid)
+				return
+			}
+			zap.L().Error("调用logic.PostListByCommunity()后出错", zap.Error(err))
+			ResponseError(c, http.StatusAccepted, CodeServeBusy)
 			return
 		}
-		zap.L().Error("调用logic.PostListByCommunity()后出错", zap.Error(err))
-		ResponseError(c, http.StatusAccepted, CodeServeBusy)
-		return
+		// 响应
+		ResponseSuccessWithData(c, data)
+	} else {
+		// 将查询指定社区
+		data, err = logic.GetPostListByCommunity(p)
+		if err != nil {
+			if errors.Is(err, logic.ErrorIDsEmpty) {
+				zap.L().Info("从Redis中并未获取到IDs", zap.Error(err), zap.Any("参数", p))
+				ResponseError(c, http.StatusAccepted, CodePageInvalid)
+				return
+			}
+			zap.L().Error("调用logic.GetPostListByCommunity()后出错", zap.Error(err))
+			ResponseError(c, http.StatusAccepted, CodeServeBusy)
+			return
+		}
+		// 响应
+		ResponseSuccessWithData(c, data)
 	}
-	// 响应
-	ResponseSuccessWithData(c, data)
 }

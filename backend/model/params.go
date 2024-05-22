@@ -42,13 +42,7 @@ const OrderTime = "time"
 const OrderScore = "score"
 
 type ParamPostList struct {
-	Page  int    `form:"page"`
-	Size  int    `form:"size"`
-	Order string `form:"order"`
-}
-
-type ParamPostListInSpecialCommunity struct {
-	CommunityID uint64 `form:"community_id" binding:"required"`
+	CommunityID uint64 `form:"community_id"`
 	Page        int    `form:"page"`
 	Size        int    `form:"size"`
 	Order       string `form:"order"`
