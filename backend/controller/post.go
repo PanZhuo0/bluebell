@@ -20,6 +20,7 @@ func CreatePostHandler(c *gin.Context) {
 		ResponseError(c, http.StatusBadRequest, CodeInvalidParams)
 		return
 	}
+
 	// get userid from Context
 	uid, err := GetUserID(c)
 	if err != nil {
