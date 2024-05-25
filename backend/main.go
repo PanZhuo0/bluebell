@@ -12,6 +12,20 @@ import (
 
 const MachineID = 1000
 
+// @title bulebell项目
+// @Version 1.0
+// @description 这里是描述信息
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.utl http://www.swagger.io/support
+// @contrct.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/license/LICENSE-2.0.html
+
+// @host 这里写host主机
+// @BasePath 这里写base path 根地址
 func main() {
 	// pre:初始化工具
 	utils.Init(MachineID)

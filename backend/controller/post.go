@@ -12,6 +12,27 @@ import (
 	"go.uber.org/zap"
 )
 
+// CreatePostHandler 创建帖子接口
+// 简介
+// @Summary 创建帖子接口
+// 描述信息
+// @Description 可以用于创建帖子
+// 分组
+// @Tags 帖子相关接口
+// 接收的内容类型
+// @Accpet application/json
+// 返回的内容类型
+// @Produce application/json
+// 需要的参数,true:必填
+// @Param Authorization header string true "Bearer 用户令牌"
+// 需要的参数,query:放在Query
+// @Param object query model.Post false "查询参数"
+// 安全性:API需要认证
+// @Security ApiKeyAuth
+// 成功返回ResData对象类型的数据
+// @Success 200 {object} ResData
+// 接收的请求类型和请求路径
+// @Router /post [post]
 func CreatePostHandler(c *gin.Context) {
 	// parma check
 	p := new(model.Post)

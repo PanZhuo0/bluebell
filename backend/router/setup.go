@@ -3,12 +3,16 @@ package router
 import (
 	"backend/controller"
 	"backend/controller/middleware"
+	"time"
+
+	// _ "bluebell/docs"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Setup() *gin.Engine {
 	r := gin.Default()
+	r.Use(middleware.RateLimitMiddleware(time.Second*2, 1)) //限流，令牌桶，2秒产生1个令牌，最多1个
 	v1 := r.Group("/api/v1")
 	v1.POST("/signup", controller.SignUpHandler)
 	v1.POST("/login", controller.LoginHandler)
